@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-  # 新增这一行，放在脚本最顶部
+import os
+import time
+import json
+import traceback
+# ... 后续原有代码
+
 # -*- coding: utf-8 -*-
 """
 每日汇总脚本：22:45最终汇报+清理文档，支持手动终止
