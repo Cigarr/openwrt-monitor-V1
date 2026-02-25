@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 检测脚本：0-22点内随机检测N次，结果写入JSON，支持手动终止数据保存
-cron: 0 */1 * * *  # 青龙定时：每1小时触发（可自定义）
+cron: 0 */1 * * *
 new Env('OpenWrt监控-检测脚本');
 """
 import requests

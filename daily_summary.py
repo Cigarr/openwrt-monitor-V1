@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 每日汇总脚本：22:45最终汇报+清理文档，支持手动终止
-cron: 45 22 * * *  # 青龙定时：每天22:45触发
+cron: 45 22 * * *
 new Env('OpenWrt监控-每日汇总');
 """
 import requests
