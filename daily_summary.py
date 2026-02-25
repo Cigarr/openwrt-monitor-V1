@@ -163,13 +163,14 @@ def clean_temp_files():
         return False
 
 def main():
-    print_log("===== 启动每日汇总脚本 =====")
+    # ===== 新增：脚本名称日志标识 =====
+    print_log("===== OpenWrt监控-每日汇总脚本 启动 =====")
     summary = parse_archive_data()
     push_content, md_content = generate_daily_report(summary)
     send_wechat_msg(push_content)
     save_md_file(md_content)
     clean_temp_files()
-    print_log("===== 每日汇总脚本执行完成 =====")
+    print_log("===== OpenWrt监控-每日汇总脚本 执行完成 =====")
 
 if __name__ == "__main__":
     main()

@@ -112,7 +112,8 @@ def archive_push_result(summary):
     safe_write_json(PUSH_ARCHIVE_FILE, archive_data)
 
 def main():
-    print_log("推送脚本启动")
+    # ===== 新增：脚本名称日志标识 =====
+    print_log("===== OpenWrt监控-异常推送脚本 启动 =====")
     summary = summarize_detect_data()
     print_log(f"检测汇总：总次数{summary['total_detect']}，异常{summary['abnormal']}")
     content = generate_push_content(summary)
@@ -121,7 +122,7 @@ def main():
         archive_push_result(summary)
     else:
         print_log("无异常，跳过推送")
-    print_log("推送脚本正常结束")
+    print_log("===== OpenWrt监控-异常推送脚本 执行完成 =====")
 
 if __name__ == "__main__":
     main()

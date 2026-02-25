@@ -130,19 +130,23 @@ def main():
     import signal
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
+    
+    # ===== 新增：脚本名称日志标识 =====
+    print_log("===== OpenWrt监控-核心检测脚本 启动 =====")
+    
     run_mode, is_manual = judge_run_mode()
     print_log("===== 运行模式识别 =====")
-    print_log(f"参数判断：{'手动参数' if os.path.exists('/ql/data/scripts/manual_flag') else '无手动参数'}")
+    print_log(f"文件标记：{'存在手动标记' if os.path.exists('/ql/data/scripts/manual_flag') else '无手动标记'}")
     print_log(f"时间段判断：{'自动时段内' if is_in_auto_time_range() else '非自动时段'}")
     print_log(f"最终判定：{run_mode.upper()}（{'手动触发' if is_manual else '自动定时'}）")
     if is_manual:
         print_log("===== 手动模式执行 =====")
         single_detect()
-        print_log("手动检测完成，脚本结束")
+        print_log("===== OpenWrt监控-核心检测脚本 手动模式执行完成 =====")
     else:
         print_log("===== 自动模式执行 =====")
         auto_detect_cycle()
-        print_log("自动检测循环完成，脚本结束")
+        print_log("===== OpenWrt监控-核心检测脚本 自动模式执行完成 =====")
 
 if __name__ == "__main__":
     main()
