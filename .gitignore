@@ -1,0 +1,19 @@
+# 忽略配置文件（避免泄露企业微信密钥）
+config.py
+
+# 忽略日志目录
+logs/
+
+# 忽略临时JSON文件
+*.tmp
+
+# 忽略自动生成的检测/归档文档
+detect_realtime.json
+push_archive.json
+daily_final.md
+
+# 忽略Python缓存文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
