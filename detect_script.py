@@ -248,46 +248,52 @@ def detect_once():
 # ====================== 主函数 ======================
 def main():
     global manual_stop_flag
+    manual_stop_flag = False  # 初始化手动终止标记
+    
+    # ===== 新增：识别运行模式 =====
+    import os
+    # 判定是否为青龙自动运行（通过青龙环境变量）
+    is_ql_auto = True if "QL_BRANCH" in os.environ or "QL_DIR" in os.environ else False
+    run_mode = "自动定时" if is_ql_auto else "手动触发"
+    print_log(f"🔵 运行模式：{run_mode}")
+    # =============================
+
     try:
-        init_log()
-        check_running_time()  # 检查运行时段
-        print_log("🚀 检测脚本启动")
+        init_log()  # 初始化日志
+        check_running_time()  # 时段检查（手动运行也可保留，或注释掉）
         
-        # 初始化实时文档
-        if not os.path.exists(DETECT_REALTIME_FILE):
-            init_data = {
-                "date": time.strftime('%Y-%m-%d'),
-                "detect_records": [],
-                "manual_stop": False
-            }
-            safe_write_json(DETECT_REALTIME_FILE, init_data)
-        
-        # 生成随机间隔
-        intervals = get_random_intervals()
-        print_log(f"🎲 本次随机检测间隔：{[f'{x//60}分{x%60}秒' for x in intervals]}")
-        
-        # 执行检测
-        for idx, interval in enumerate(intervals):
-            if manual_stop_flag:
-                break
-            print_log(f"⏳ 等待 {interval//60} 分 {interval%60} 秒后进行第 {idx+1} 次检测")
-            # 分段等待，便于响应终止信号
-            wait_remaining = interval
-            while wait_remaining > 0 and not manual_stop_flag:
-                time.sleep(min(1, wait_remaining))
-                wait_remaining -= 1
-            if manual_stop_flag:
-                break
-            detect_once()
-        
-        print_log("🏁 检测脚本正常结束")
+        # ===== 核心分支：按运行模式执行不同检测逻辑 =====
+        if is_ql_auto:
+            # 自动运行：保留原有随机检测逻辑
+            detect_times = DETECT_TIMES_PER_RUN  # 配置的单次检测次数
+            print_log(f"📌 自动模式：将在{DETECT_TIME_RANGE}秒内随机执行{detect_times}次检测")
+            
+            # 生成随机检测时间点（原有逻辑）
+            import random
+            detect_timestamps = sorted([random.randint(0, DETECT_TIME_RANGE) for _ in range(detect_times)])
+            
+            # 按随机间隔执行检测（原有逻辑）
+            for idx, delay in enumerate(detect_timestamps):
+                if manual_stop_flag:
+                    print_log("⚠️ 检测被手动终止，保存已检测数据")
+                    break
+                print_log(f"⏳ 第{idx+1}次检测：等待{delay}秒后执行")
+                time.sleep(delay)
+                # 执行单次检测
+                single_detect()
+        else:
+            # 手动运行：跳过随机，直接执行1次检测
+            print_log(f"📌 手动模式：立即执行1次检测（跳过随机间隔）")
+            single_detect()  # 直接调用核心检测函数
+        # ==============================================
+
+        print_log("✅ 检测流程执行完成")
     except Exception as e:
-        print_log(f"❌ 检测脚本异常：{str(e)}")
+        print_log(f"❌ 检测流程异常：{e}")
         traceback.print_exc()
-        emergency_save()
     finally:
-        gc.collect()
-        dns_cache.clear()
+        # 无论是否终止，确保数据写入（原有逻辑）
+        save_detect_result()
 
 if __name__ == "__main__":
     main()
