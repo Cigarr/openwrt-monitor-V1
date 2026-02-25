@@ -170,14 +170,29 @@ def summarize_daily_data():
         "manual_stop": archive_data.get("manual_stop", False),
         "date": archive_data.get("date", time.strftime('%Y-%m-%d'))
     }
+def generate_daily_md(summary, content):
+    """生成每日最终MD文档"""
+    md_content = f"""# OpenWrt智能监控 · {summary['date']} 每日报告
+## 汇总信息
+- 推送次数：{summary['total_push']} 次
+- 检测总次数：{summary['total_detect']} 次
+- 异常总次数：{summary['total_abnormal']} 次
+- 平均可用率：{summary['avg_availability_rate']}%
+- 汇总时间：{time.strftime('%Y-%m-%d %H:%M:%S')}
+- 手动终止：{summary['manual_stop']}
 
-def generate_daily_content(summary):
-    """生成每日最终报告内容"""
-    date = summary["date"]
-    now = time.strftime('%Y-%m-%d %H:%M:%S')
-    
-    if summary["total_push"] == 0:
-        content = f"""
+## 异常统计
+- 异常最多目标：{summary['max_abnormal_target']}（{summary['max_abnormal_count']}次）
+
+## 企业微信通知内容
+{content}
+"""
+    try:
+        with open(DAILY_FINAL_FILE, 'w', encoding='utf-8') as f:
+            f.write(md_content)
+        print_log("✅ 每日MD报告生成成功")
+    except Exception as e:
+        print_log(f"❌ MD报告生成失败：{e}")
 📅 OpenWrt智能监控 · {date} 每日最终报告
 ━━━━━━━━━━━━━━━━━━━━━━━━
 📊 当日概览：暂无推送数据
